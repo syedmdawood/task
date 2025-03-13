@@ -31,7 +31,14 @@ import EditProfile from "./EditProfile";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { setToken, userData, getUserData, token } = useContext(AppContext);
+  const {
+    setToken,
+    userData,
+    getUserData,
+    token,
+    toastMessage,
+    setToastMessage,
+  } = useContext(AppContext);
   const [showPopup, setShowPopup] = useState(false);
   const logout = () => {
     setToken(false);
@@ -61,6 +68,13 @@ const Dashboard = () => {
       getUserData();
     }
   }, []);
+
+  useEffect(() => {
+    if (toastMessage) {
+      toast.success(toastMessage);
+      setToastMessage(null); // Reset message after showing
+    }
+  }, [toastMessage]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

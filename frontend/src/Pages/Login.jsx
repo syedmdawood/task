@@ -3,6 +3,9 @@ import { toast } from "react-toastify";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
 
+import Dashboard from "./Dashboard";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [state, setState] = useState("Sign Up");
   const [email, setEmail] = useState("");
@@ -13,7 +16,9 @@ const Login = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("male");
 
-  const { setToken } = useContext(AppContext);
+  const { setToken, token } = useContext(AppContext);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,6 +33,7 @@ const Login = () => {
           localStorage.setItem("token", data.token);
           setToken(data.token);
           toast.success("Account created successfully");
+          navigate(<Dashboard />);
         } else {
           toast.error(data.message);
         }
@@ -40,6 +46,7 @@ const Login = () => {
           localStorage.setItem("token", data.token);
           setToken(data.token);
           toast.success("Logged in successfully");
+          navigate(<Dashboard />);
         } else {
           toast.error(data.message);
         }

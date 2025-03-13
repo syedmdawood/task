@@ -8,10 +8,11 @@ import { v2 as cloudinary } from "cloudinary";
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, dob, phone, address, gender } = req.body
-        const imageFile = req.file
-        if (!name || !email || !password || !dob || !phone || !address) {
+
+        if (!name || !email || !password || !dob || !phone || !address || !gender) {
             return res.status(400).json({ success: false, message: "Missing Details" })
         }
+
         if (!validator.isEmail(email)) {
             return res.status(404).json({ success: false, message: "Please enter a valid email" })
         }
@@ -20,13 +21,11 @@ const registerUser = async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
-        const imageUrl = imageUpload.secure_url
+
 
         const userData = {
             name,
             email,
-            image: imageUrl,
             password: hashedPassword,
             dob,
             phone,
@@ -35,8 +34,9 @@ const registerUser = async (req, res) => {
         }
         const newUser = new userModel(userData)
         await newUser.save()
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+        res.json({ success: true, token })
 
-        res.json({ success: true, message: "User Added" })
 
     } catch (error) {
         console.log(error);
@@ -83,16 +83,16 @@ const getUserData = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
 
-        const { userId, name, email, dob, phone, address } = req.body
+        const { userId, name, dob, phone, address } = req.body
         const imageFile = req.file
-        if (!name || !phone || !dob || !email || !address) {
+        if (!name || !phone || !dob || !address) {
             return res.status(400).json({
                 success: false,
                 message: "data missing"
             });
         }
 
-        await userModel.findByIdAndUpdate(userId, { name, email, dob, phone, address })
+        await userModel.findByIdAndUpdate(userId, { name, dob, phone, address })
         if (imageFile) {
             const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: 'image' })
             const imageUrl = imageUpload.secure_url

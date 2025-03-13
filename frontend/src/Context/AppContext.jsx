@@ -9,6 +9,7 @@ const AppContextProvider = (props) => {
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : false
   );
+  const [toastMessage, setToastMessage] = useState(null);
 
   const getUserData = async () => {
     try {

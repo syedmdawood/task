@@ -5,10 +5,10 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const EditProfile = ({ onClose }) => {
-  const { userData, setUserData, getUserData, token } = useContext(AppContext);
+  const { userData, setUserData, getUserData, token, setToastMessage } =
+    useContext(AppContext);
 
   const [name, setName] = useState(userData.name || "");
-  const [email, setEmail] = useState(userData.email || "");
 
   const [address, setAddress] = useState(userData.address || "");
   const [phone, setPhone] = useState(userData.phone || "");
@@ -21,7 +21,6 @@ const EditProfile = ({ onClose }) => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("email", email);
 
       formData.append("address", address);
       formData.append("phone", phone);
@@ -36,10 +35,9 @@ const EditProfile = ({ onClose }) => {
       );
 
       if (data.success) {
-        toast.success(data.message);
+        setToastMessage(data.message);
         getUserData(); // Refresh user data
         setImage(null); // Reset image
-        onClose();
       } else {
         toast.error(data.message);
       }
@@ -86,14 +84,6 @@ const EditProfile = ({ onClose }) => {
             className="border border-zinc-300 p-2 rounded-md mb-3"
             value={name}
             onChange={(e) => setName(e.target.value)}
-          />
-
-          <label className="text-sm">Email</label>
-          <input
-            type="email"
-            className="border border-zinc-300 p-2 rounded-md mb-3"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
 
           <label className="text-sm">Address</label>
